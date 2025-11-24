@@ -1,41 +1,214 @@
-# Raydium Bundler (Buy with 21 wallets)
-Solana Raydium Bundler: Raydium Bundler with 21 wallets
+# Pumpfun Smart Contract (Meteora Integration)
 
-## Contact 
-### Telegram: [Vladmeer](https://t.me/vladmeer67)   
-#### https://t.me/vladmeer67
-
-### Twitter: [Vladmeer](https://x.com/vladmeer67)   
-#### https://x.com/vladmeer67
+A Solana smart contract forked and customized from pumpfun (pump.fun), featuring bonding curve mechanics and integration with Meteora DEX for seamless token launches and liquidity migration.
 
 ## Overview
-This bundler leverages Jito to streamline Solana transactions by allowing you to batch up to 4 transactions in a single bundle. It enables seamless token creation, buying, and selling across 21 wallets, all within a few steps.
 
-## How the Bundler Works:
-1. Create a Token (Customize Metadata)
-Start by creating a new token along with its metadata. This is the foundation for your transaction.
+This project implements a complete token launch platform on Solana with:
+- **Bonding Curve System**: Create and trade tokens through a bonding curve mechanism
+- **Meteora Integration**: Automatic migration to Meteora DEX pools when bonding curve completes
+- **Token 2022 Support**: Full compatibility with SPL Token 2022 standard
+- **Metadata Support**: Integrated with Metaplex Token Metadata
 
-2. Create a Market
-Set up a market for your token so that you can start trading.
+## Features
 
-3. Generate Wallets for Pool Purchases
-Create multiple wallets (up to 21) that will participate in buying tokens from the liquidity pool.  
+### Core Functionality
 
-4. Set Up the Lookup Table
-Establish a Lookup Table to efficiently track transaction data.
+- **Create Bonding Curve**: Launch new tokens with customizable parameters
+- **Swap**: Buy and sell tokens through the bonding curve
+- **Pool Migration**: Automatically create Meteora pools when bonding curve completes
+- **Pool Locking**: Secure and finalize migrated pools
+- **Admin Configuration**: Flexible configuration system for contract parameters
 
-5. Extend the Lookup Table & Simulate Transactions
-Extend the Lookup Table and simulate each transaction that will be bundled together.
+### Key Components
 
-6. Bundle Transactions
-Bundle the creation of the pool and up to 3 buying transactions from the 21 wallets.
+- Bonding curve mechanics for price discovery
+- Automatic liquidity migration to Meteora DEX
+- Team wallet management
+- Global vault for token management
+- Comprehensive error handling and events
 
-7. Revoke Authorities & Burn Liquidity Pool
-After completing the buy transactions, revoke mint and freeze authorities, and burn the liquidity pool (LP) tokens.
+## Program ID
 
+```
+B9kCGKJsUjFP3ej2JQY6bsLEaMNHpcF5TNVLrfZZbEqa
+```
 
-9. Sell Tokens in One Go
-Sell all tokens at once using a bundle, across all 21 wallets, whenever you're ready.
+## Tech Stack
 
-10. Gather SOL from All Wallets
-Finally, collect the SOL from all 21 wallets after the bundle’s buy and sell actions are complete. 
+- **Framework**: Anchor (Solana)
+- **Language**: Rust
+- **Testing**: TypeScript/JavaScript with Mocha
+- **Dependencies**:
+  - Meteora SDK
+  - Raydium SDK
+  - Metaplex UMI
+  - Solana Web3.js
+
+## Prerequisites
+
+- [Rust](https://www.rust-lang.org/tools/install) (latest stable version)
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) (v1.18+)
+- [Anchor](https://www.anchor-lang.com/docs/installation) (v0.30.1+)
+- [Node.js](https://nodejs.org/) (v16+) and [Yarn](https://yarnpkg.com/)
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/vladmeer/Pumpfun-Smart-Contract-All.git
+cd pumpfun
+```
+
+2. Install dependencies:
+```bash
+yarn install
+```
+
+3. Build the program:
+```bash
+anchor build
+```
+
+## Development
+
+### Build
+
+```bash
+anchor build
+```
+
+### Test
+
+```bash
+anchor test
+# or
+yarn test
+```
+
+### Lint
+
+```bash
+yarn lint
+```
+
+### Fix Linting Issues
+
+```bash
+yarn lint:fix
+```
+
+## Project Structure
+
+```
+pumpfun/
+├── programs/
+│   └── pump-all/
+│       └── src/
+│           ├── lib.rs                 # Main program entry point
+│           ├── constants.rs           # Program constants
+│           ├── errors.rs              # Custom error types
+│           ├── events.rs              # Event definitions
+│           ├── utils.rs               # Utility functions
+│           ├── instructions/          # Instruction handlers
+│           │   ├── admin/
+│           │   │   └── configure.rs   # Admin configuration
+│           │   ├── curve/
+│           │   │   ├── create_bonding_curve.rs
+│           │   │   └── swap.rs
+│           │   └── migration/
+│           │       ├── create_pool.rs
+│           │       └── lock_pool.rs
+│           └── state/                 # State accounts
+│               ├── config.rs
+│               ├── bondingcurve.rs
+│               └── meteora.rs
+├── Anchor.toml                        # Anchor configuration
+├── Cargo.toml                         # Rust workspace config
+├── package.json                       # Node.js dependencies
+└── tsconfig.json                      # TypeScript config
+```
+
+## Usage
+
+### Creating a Bonding Curve
+
+```rust
+pub fn create_bonding_curve(
+    ctx: Context<CreateBondingCurve>,
+    decimals: u8,
+    token_supply: u64,
+    virtual_lamport_reserves: u64,
+    name: String,
+    symbol: String,
+    uri: String,
+) -> Result<()>
+```
+
+### Swapping Tokens
+
+```rust
+pub fn swap(
+    ctx: Context<Swap>,
+    amount: u64,
+    direction: u8,  // 0 = buy, 1 = sell
+    minimum_receive_amount: u64,
+) -> Result<u64>
+```
+
+### Migrating to Meteora Pool
+
+```rust
+pub fn create_pool(ctx: Context<InitializePoolWithConfig>) -> Result<()>
+```
+
+### Locking Pool
+
+```rust
+pub fn lock_pool(ctx: Context<LockPool>) -> Result<()>
+```
+
+## Configuration
+
+The contract can be configured through the `configure` instruction, allowing updates to:
+- Team wallet
+- Fee structure
+- Pool parameters
+- Migration settings
+
+## Networks
+
+The program is configured for:
+- **Mainnet**: `B9kCGKJsUjFP3ej2JQY6bsLEaMNHpcF5TNVLrfZZbEqa`
+- **Devnet**: `B9kCGKJsUjFP3ej2JQY6bsLEaMNHpcF5TNVLrfZZbEqa`
+- **Localnet**: `B9kCGKJsUjFP3ej2JQY6bsLEaMNHpcF5TNVLrfZZbEqa`
+
+## Security
+
+- Comprehensive input validation
+- Access control for admin functions
+- Secure account constraints
+- Overflow protection enabled in release builds
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+- **GitHub**: [@vladmeer](https://github.com/vladmeer)
+- **Telegram**: [@vladmeer67](https://t.me/vladmeer67)
+- **Twitter**: [@vladmeer67](https://x.com/vladmeer67)
+
+## Disclaimer
+
+This software is provided "as is" without warranty. Use at your own risk. Always audit smart contracts before deploying to mainnet.
+
+---
+
+**Note**: This is a forked and customized version of the pumpfun smart contract with Meteora DEX integration for enhanced functionality.
+
